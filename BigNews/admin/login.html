@@ -57,6 +57,7 @@
   </div><!-- /.modal -->
 
 
+  <script src="./libs/http.js"></script>
   <script>
     $(function () {
       // 给登录按钮添加点击事件
@@ -76,7 +77,7 @@
         }
         // 发送ajax请求
         $.ajax({
-          url: 'http://localhost:8080/api/v1/admin/user/login',
+          url: BigNews.user_login,
           type: 'post',
           data: {
             username: txt,
@@ -90,6 +91,8 @@
             $('.modal-body>p>span').text(backData.msg);
             // 判断如果code等于200的话就跳转到首页
             if (backData.code == 200) {
+              // 将服务器返回的token保存到localstorage中
+              localStorage.setItem('token',backData.token);
               $('#myModal').on('hidden.bs.modal', function (e) {
                 // 跳转到首页
                 window.location.href = './index.html';
