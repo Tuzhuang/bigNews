@@ -25,33 +25,34 @@
         </div>
         <!-- 左侧导航栏 -->
         <div class="menu">
-            <div class="level01 active"><a href="#" target="main_frame"><i
+            <div class="level01 active"><a href="./main_count.html" target="myFrame"><i
                         class="iconfont icon-yidiandiantubiao04"></i><span>首页</span></a></div>
-            <div class="level01"><a href="#"><i class="iconfont icon-icon-article"></i><span>文章管理</span><b
+            <div class="level01"><a href="javascript:;"><i class="iconfont icon-icon-article"></i><span>文章管理</span><b
                         class="iconfont icon-arrowdownl"></b></a></div>
             <ul class="level02">
-                <li><a href="#" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章列表</span></a></li>
-                <li><a href="#" target="main_frame"><i class="iconfont icon-previewright"></i><span>发表文章</span></a></li>
-                <li><a href="#" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章类别管理</span></a>
+                <li><a href="./article_list.html" target="myFrame"><i class="iconfont icon-previewright"></i><span>文章列表</span></a></li>
+                <li><a href="./article_edit.html" target="myFrame"><i class="iconfont icon-previewright"></i><span>发表文章</span></a></li>
+                <li><a href="./article_category.html" target="myFrame"><i class="iconfont icon-previewright"></i><span>文章类别管理</span></a>
                 </li>
             </ul>
 
-            <div class="level01"><a href="#" target="main_frame"><i
+            <div class="level01"><a href="./comment_list.html" target="myFrame"><i
                         class="iconfont icon-comment"></i><span>评论管理</span></a></div>
-            <div class="level01" id="user"><a href="#" target="main_frame"><i
+            <div class="level01" id="user"><a href="./user.html" target="myFrame"><i
                         class="iconfont icon-user"></i><span>个人中心</span></a></div>
         </div>
         <!-- 顶部栏 -->
         <div class="header_bar">
             <div class="user_center_link">
-                <a href="./user.html" target="main_frame">个人中心</a>
+                <a href="./user.html" target="myFrame" id="selfCent">个人中心</a>
                 <img src="images/2.jpg" alt="person">
                 <a href="javascript:void(0)" class="logout"><i class="iconfont icon-tuichu"></i> 退出</a>
             </div>
         </div>
         <!-- 右侧主体内容 -->
         <div class="main" id="main_body">
-
+            <!-- 设置ifram标签 -->
+            <iframe src="./main_count.html" frameborder="0" name="myFrame" style="width: 100%;height: 100%;"></iframe>
         </div>
     </div>
     <!-- 登出，未登录模态框 -->
@@ -129,6 +130,36 @@
                     // 跳转到登录页面
                     window.location.href = './login.html';
                 })
+            })
+
+
+            // 给左侧li标签点击添加类名
+            $('.menu .level01').click(function(){
+                $(this).addClass('active').siblings().removeClass('active');
+                // 判断如果点击的是第二个div标签就让二级菜单下拉
+                if($(this).index() == 1){
+                    // 让二级菜单下拉
+                    $('.level02').slideToggle();
+                    // 给小尖尖添加动画
+                    $(this).find('b').toggleClass('rotate0');
+                    // 点击一级菜单的时候让二级菜单的第一个标签高亮并且跳转到当前页
+                    // dom元素的click事件不仅可以触发注册事件也可以触发默认事件
+                    $('.level02>li:eq(0)>a')[0].click();
+                }else{
+                    // 如果点击的不是文章管理就让二级菜单里面的li标签删除类
+                    $('.level02').find('li').removeClass('active');
+                }
+            })
+
+            // 给二级菜单添加点击事件
+            $('.level02>li').click(function(){
+                $(this).addClass('active').siblings().removeClass('active');
+            })
+
+            // 点击顶部top个人中心时让左侧侧边栏与之对应
+            $('#selfCent').click(function(){
+                // 调用左侧侧边栏事件 dom元素的click事件不仅可以触发注册事件也可以触发默认事件
+                $('.level01:eq(3)')[0].click();
             })
 
         })
