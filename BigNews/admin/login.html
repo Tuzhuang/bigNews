@@ -37,6 +37,69 @@
       </form>
     </div>
   </div>
+  <!-- 登陆模态框 -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">友情提示</h4>
+        </div>
+        <div class="modal-body">
+          <p><span></span>&hellip;</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <script>
+    $(function () {
+      // 给登录按钮添加点击事件
+      $('.input_sub').click(function (e) {
+        // 阻止表单的默认提交事件
+        e.preventDefault();
+        // 获取输入框的内容
+        let txt = $('.input_txt').val();
+        let pass = $('.input_pass').val();
+        // 做非空判断
+        if (txt == '' || pass == '') {
+          // 调用方法让模态框弹出
+          $('#myModal').modal();
+          // 给提示信息设置文字
+          $('.modal-body>p>span').text('用户名或密码不能为空喔');
+          return; // 不再往下执行
+        }
+        // 发送ajax请求
+        $.ajax({
+          url: 'http://localhost:8080/api/v1/admin/user/login',
+          type: 'post',
+          data: {
+            username: txt,
+            password: pass
+          },
+          success: function (backData) {
+            // console.log(backData)；
+            // 调用方法让模态框弹出
+            $('#myModal').modal();
+            // 给提示信息设置文字
+            $('.modal-body>p>span').text(backData.msg);
+            // 判断如果code等于200的话就跳转到首页
+            if (backData.code == 200) {
+              $('#myModal').on('hidden.bs.modal', function (e) {
+                // 跳转到首页
+                window.location.href = './index.html';
+              })
+            }
+          }
+        })
+      })
+    })
+  </script>
 
 </body>
 
