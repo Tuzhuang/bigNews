@@ -154,6 +154,9 @@
             // 给二级菜单添加点击事件
             $('.level02>li').click(function(){
                 $(this).addClass('active').siblings().removeClass('active');
+                // 点击二级菜单的时候让一级菜单的 文章管理 高亮
+                $(this).parent().addClass('active').siblings().removeClass('active');
+                $('.level01:eq(1)').addClass('active');
             })
 
             // 点击顶部top个人中心时让左侧侧边栏与之对应

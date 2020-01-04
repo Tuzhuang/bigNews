@@ -51,5 +51,203 @@
             </table>
         </div>
     </div>
+    <!-- 新增和编辑共用的模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">新增分类</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">名称:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Slug:</label>
+                            <input class="form-control" id="message-text">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn_ope">新增分类</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 新增成功和编辑成功的模态框 -->
+    <div class="modal fade" id="myModalHint" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">友情提示</h4>
+            </div>
+            <div class="modal-body">
+              <p><span></span>&hellip;</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+
+    <!-- 写文章分类管理的模板 -->
+    <script id="cate_list" type="text/html">
+        {{ each data v }}
+            <tr>
+                <td>{{ v.name }}</td>
+                <td>{{ v.slug }}</td>
+                <td class="text-center">
+                    <!-- 给编辑按钮实现添加一个自定义属性 -->
+                    <a href="javascript:;" data-id="{{ v.id }}" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-xs btn-edit">编辑</a>
+                    <a href="javascript:;" data-id="{{ v.id }}" class="btn btn-danger btn-xs btn_delete">删除</a>
+                </td>
+            </tr>
+        {{ /each }}
+    </script>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            // 页面一加载就请求页面上的数据  文章类别  把获取数据的ajax封装成方法
+            // 默认调用一次
+            getDataList();
+            function getDataList() {
+                $.ajax({
+                    url: BigNews.category_list,
+                    type: 'get',
+                    success: function (backData) {
+                        // console.log(backData);
+                        // 把写好的模板渲染到页面上
+                        $('.table>tbody').html(template('cate_list', backData));
+                    }
+                })
+            }
+
+            // 新增按钮和编辑按钮共用一个模态框
+            $('#myModal').on('show.bs.modal', function (e) {
+                // 判断当前点击的是新增还是编辑
+                if ($(e.relatedTarget).text() == '新增分类') {
+                    // 设置模态框的文本  新增
+                    $('.modal-title').text('新增分类');
+                    $('.btn_ope').text('新增分类');
+                    $('.btn_ope').removeClass('btn-primary');
+                    $('.btn_ope').addClass('btn-success btn-add');
+                    // 给新增按钮添加点击事件
+                    $('.btn-add').click(function () {
+                        // 判断如果输入框为空的话就不发送请求
+                        if ($('#recipient-name').val() == '' || $('#message-text').val() == '') {
+                            // 调用方法让模态框弹出
+                            $('#myModalHint').modal();
+                            // 给提示信息设置文字
+                            $('.modal-body>p>span').text('用户名或密码不能为空喔');
+                            return;
+                        }
+                        // 发送新增的ajax请求
+                        $.ajax({
+                            url: BigNews.category_add,
+                            type: 'post',
+                            data: {
+                                name: $('#recipient-name').val(),
+                                slug: $('#message-text').val()
+                            },
+                            success: function (backData) {
+                                // console.log(backData);
+                                // 让模态框和遮罩层消失
+                                $('#myModal').fadeOut();
+                                $('.modal-backdrop').fadeOut();
+                                // 新增成功之后弹出的提示框
+                                // 调用方法让模态框弹出
+                                $('#myModalHint').modal();
+                                // 给提示信息设置文字
+                                $('.modal-body>p>span').text(backData.msg);
+                                // 新增成功调用获取数据的方法
+                                getDataList();
+                                // 清空输入框
+                                $('.btn-cancel').click();
+                            }
+                        })
+                    })
+                } else if($(e.relatedTarget).text() == '编辑') {
+                    // 设置模态框的文本  编辑
+                    $('.modal-title').text('编辑分类');
+                    $('.btn_ope').text('编辑分类');
+                    $('.btn_ope').removeClass('btn-success');
+                    $('.btn_ope').addClass('btn-primary btn-comp');
+                    // 给输入框设置文本  e.relatedTarget代表当前触发的元素
+                    $('#recipient-name').val($(e.relatedTarget).parent().prev().prev().text());
+                    $('#message-text').val($(e.relatedTarget).parent().prev().text());
+                    // 给新增按钮添加点击事件
+                    $('.btn-comp').click(function () {
+                        if ($(e.relatedTarget).text() == '编辑') {
+                        // console.log($(e.relatedTarget).text())
+                        // console.log($(e.relatedTarget).attr('data-id'))
+                            // 发送编辑的ajax请求
+                            $.ajax({
+                                url: BigNews.category_edit,
+                                type: 'post',
+                                data: {
+                                    id: $(e.relatedTarget).attr('data-id'),
+                                    name: $('#recipient-name').val(),
+                                    slug: $('#message-text').val()
+                                },
+                                success: function (backData) {
+                                    // console.log(backData)
+                                    // 隐藏模态框
+                                    $('#myModal').fadeOut();
+                                    $('.modal-backdrop').fadeOut();
+                                    // 调用方法让模态框弹出
+                                    $('#myModalHint').modal();
+                                    // 给提示信息设置文字
+                                    $('.modal-body>p>span').text(backData.msg);
+                                    // 重新请求数据
+                                    getDataList();
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+            // 给取消按钮添加一个点击事件 清空输入框的内容
+            $('.btn-cancel').click(function () {
+                // 调用表单dom元素的reset()方法清空输入框
+                $('.modal-body>form')[0].reset();
+            })
+
+            // 给删除按钮添加点击事件
+            $('.table>tbody').on('click', '.btn_delete', function () {
+                // 获取当前点击的id
+                let id = $(this).attr('data-id');
+                // console.log(id);
+                // 调用方法让模态框弹出
+                $('#myModalHint').modal();
+                // 给提示信息设置文字
+                $('.modal-body>p>span').text('确认要删除吗');
+                // 给模态框的确认按钮添加点击事件
+                $('.btn-primary').click(function () {
+                    // 调用ajax请求 删除数据
+                    $.ajax({
+                        url: BigNews.category_delete,
+                        type: 'post',
+                        data: {id},
+                        success: function (backData) {
+                            // console.log(backData);
+                            // 重新请求数据
+                            getDataList();
+                        }
+                    })
+                })
+            })
+        })  
+    </script>
+</body>
 
 </html>
