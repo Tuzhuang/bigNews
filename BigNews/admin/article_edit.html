@@ -12,8 +12,15 @@
     <link rel="stylesheet" href="css/main.css">
     <!-- jq -->
     <script src="./libs/jquery-1.12.4.min.js"></script>
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
     <!-- 模板引擎 -->
     <script src="./libs/template-web.js"></script>
+    <!-- 导包 jedate插件 -->
+    <link rel="stylesheet" href="./libs/jedate/css/jeDate-test.css">
+    <link rel="stylesheet" href="./libs/jedate/css/jedate.css">
+    <script src="./libs/jedate/js/jedate.js"></script>
+    <!-- 导包 wangEditor插件 -->
+    <script src="./libs/wangEditor/release/wangEditor.min.js"></script>
 </head>
 
 <body>
@@ -33,7 +40,12 @@
                     <label for="inputCover" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
                         <img src="images/pic06.jpg" class="article_cover">
-                        <input name="cover" type="file" id="inputCover">
+                        <input style="display: none;" name="cover" type="file" id="inputCover">
+                        <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
+                        <br>
+                        <label for="inputCover">
+                            <img src="./images/22.jpg" style="height: 50px;" alt="">
+                        </label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -51,11 +63,20 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">发布时间：</label>
                     <div class="col-sm-4">
+                        <!-- jedate插件的使用 -->
+                        <div class="jeinpbox">
+                            <input type="text" class="jeinput" id="testico" placeholder="YYYY-MM-DD">
+                            <div class="icons jebtns"
+                                onclick="jeDate('#testico',{zIndex:'10002',trigger:false,format: 'YYYY-MM-DD',theme:{bgcolor:'#00A680',pnColor:'#00DDAA'}})">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
+                        <!-- wangEditor富文本插件的使用 -->
+                        <div id="editor"></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -67,6 +88,149 @@
             </form>
         </div>
     </div>
+    <!-- 发送请求成功后的模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="z-index: 20000;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">友情提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p><span></span>&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <script id="cate_list" type="text/html">
+        {{ each data v }}
+            <option value="{{ v.id }}">{{ v.name }}</option>
+        {{ /each }}
+    </script>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            // 引入jedate日期插件
+            jeDate("#testico", {
+                theme: { bgcolor: "#00A680", pnColor: "#00DDAA" },
+                festival: true, // 设置农历
+                format: "YYYY-MM-DD",
+                zIndex: '10002'
+            });
+
+            // 引入wangEditor富文本插件
+            var E = window.wangEditor
+            var editor = new E('#editor')
+            // 或者 var editor = new E( document.getElementById('editor') )
+            editor.create();
+
+            // 获取上个页面传过来的id
+            let id = window.location.href.split('=')[1];
+            // console.log(id);
+
+            // 调用ajax请求当前id的所有文章类别
+            $.ajax({
+                url: BigNews.category_list,
+                type: 'get',
+                data: {
+                    id: id
+                },
+                success: function (backData) {
+                    // console.log(backData);
+                    if (backData.code == 200) {
+                        // 把设置好的模板引擎渲染到页面上
+                        $('.category').html(template('cate_list', backData));
+                    }
+                }
+            })
+
+            // 发送ajax请求获取文章的详细信息
+            $.ajax({
+                url: BigNews.article_search,
+                type: 'get',
+                data: {
+                    id: id
+                },
+                success: function (backData) {
+                    // console.log(backData);
+                    if (backData.code == 200) {
+                        // 将获取到的内容设置到页面上
+                        $('#inputTitle').val(backData.data.title);
+                        $('.article_cover').attr('src', backData.data.cover);
+                        $('.category').val(backData.data.categoryId);
+                        $('#testico').val(backData.data.date);
+                        editor.txt.html(backData.data.content);
+                    }
+                }
+            })
+
+            // 图片文件的预览功能
+            //1.给file表单元素注册onchange事件
+            $('#inputCover').change(function () {
+                //1.2 获取用户选择的图片
+                var file = this.files[0];
+                //1.3 将文件转为src路径
+                var url = URL.createObjectURL(file);
+                //1.4 将url路径赋值给img标签的src
+                $('.article_cover').attr('src', url);
+            });
+
+            // 给修改按钮添加点击事件提交修改的数据
+            $('.btn-edit').on('click', function (e) {
+                //禁用表单默认提交事件
+                e.preventDefault();
+                // 调用封装好的函数发送请求
+                editSub('已发布');
+            });
+
+            // 给存为草稿添加点击事件发送请求
+            $('.btn-draft').on('click', function (e) {
+                //禁用表单默认提交事件
+                e.preventDefault();
+                // 调用封装好的函数发送请求
+                editSub('草稿');
+            })
+
+            // 将提交的ajax请求抽取为函数
+            function editSub(state) {
+                //创建FormData对象：参数是表单dom对象
+                var fd = new FormData($('form')[0])
+                // 将所需的其他参数手动添加到fd中
+                fd.append('id', id);
+                fd.append('date', $('#testico').val());
+                fd.append('content', editor.txt.text());
+                fd.append('state', state);
+                $.ajax({
+                    url: BigNews.article_edit,
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (backData) {
+                        // console.log(backData);
+                        if (backData.code == 200) {
+                            // 调用方法让模态框弹出
+                            $('#myModal').modal();
+                            // 给提示信息设置文字
+                            $('.modal-body>p>span').text(backData.msg);
+                            // 弹框消失后跳转到article_edit页面
+                            $('#myModal').on('hidden.bs.modal', function (e) {
+                                // 跳转到
+                                window.location.href = './article_list.html';
+                            })
+                        }
+                    }
+                });
+            }
+
+        })
+    </script>
 </body>
 
 </html>
