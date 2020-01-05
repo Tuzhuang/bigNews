@@ -13,6 +13,8 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 引入模板引擎js文件 -->
     <script src="./libs/template-web.js"></script>
+    <!-- 导入分页插件的js文件 -->
+    <script src="./libs/jquery.twbsPagination.min.js"></script>
 </head>
 
 <body>
@@ -69,9 +71,200 @@
                 </tbody>
             </table>
             <div class="row text-center">
+                <!-- 分页插件 -->
+                <ul id="pagination" class="pagination-sm"></ul>
             </div>
         </div>
     </div>
+
+
+    <!-- 写模板  文章列表的模板 -->
+    <script id="art_list" type="text/html">
+        {{ each data.data v }}
+            <tr>
+                <td>{{ v.title }}</td>
+                <td>{{ v.author }}</td>
+                <td>{{ v.category }}</td>
+                <td class="text-center">{{ v.date }}</td>
+                <td class="text-center">{{ v.state }}</td>
+                <td class="text-center">
+                    <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                    <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
+                </td>
+            </tr>
+        {{ /each }}
+    </script>
+    <!-- 文章分类的模板 -->
+    <script id="cat_list" type="text/html">
+        <option value="">所有分类</option>
+        {{ each data v }}
+            <option value="{{ v.id }}">{{ v.name }}</option>
+        {{ /each }}
+    </script>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            // 发送文章类别查询的ajax请求  下拉框
+            $.ajax({
+                url: BigNews.category_list,
+                type: 'get',
+                success: function (backData) {
+                    // console.log(backData);
+                    // 将设置好的模板渲染到页面上
+                    $('#selCategory').html(template('cat_list', backData));
+                }
+            })
+
+            // 给筛选按钮添加点击事件
+            $('#btnSearch').click(function (e) {
+                // 阻止表单的默认事件
+                e.preventDefault();
+                // 发送ajax请求 获取文章列表的数据 先请求第一页的数据
+                getDataList(1);
+            })
+
+            // 将请求数据的方法封装成函数
+            function getDataList(currentPage) {
+                $.ajax({
+                    url: BigNews.article_query,
+                    type: 'get',
+                    data: {
+                        type: $('#selCategory').val(),
+                        state: $('#selStatus').val(),
+                        page: currentPage, // 当前页
+                        perpage: 12  // 一页展示的个数
+                    },
+                    success: function (backData) {
+                        // console.log(backData);
+                        // 将设置好的模板渲染到页面上
+                        $('.table>tbody').html(template('art_list', backData));
+                        // 设置分页插件     总页数                    当前页
+                        // if (flag) {
+                        loadPagination(backData.data.totalPage, currentPage);
+                        // }
+                    }
+                })
+            }
+
+            // 把加载分页也封装成函数     总页数        当前页
+            function loadPagination(totalPages, currentPage) {
+                // 将之前的分页销毁掉，然后重新生成新的分页
+                $('#pagination').twbsPagination('destroy');
+                // 初始化新的分页插件
+                $('#pagination').twbsPagination({
+                    totalPages: totalPages,  // 总页数
+                    startPage: currentPage,  // 起始页
+                    visiblePages: 7,  // 可见的选项页
+                    first: '首页',
+                    prev: '上一页',
+                    next: '下一页',
+                    last: '尾页',
+                    onPageClick: function (event, page) {
+                        $('#page-content').text('Page ' + page);
+                        // 判断当前起始页和点击页是不是同一页，如果是就不执行下面的代码
+                        if (currentPage != page) {
+                            // 点击页码的时候重新渲染数据
+                            getDataList(page);
+                        }
+                    }
+                });
+            }
+
+            // 默认进入页面触发一次，请求所有分类的数据
+            $('#btnSearch').click();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // // 将请求数据的方法封装成函数
+            // function getDataList(currentPage) {
+            //     $.ajax({
+            //         url: BigNews.article_query,
+            //         type: 'get',
+            //         data: {
+            //             type: $('#selCategory').val(),
+            //             state: $('#selStatus').val(),
+            //             page: currentPage, // 当前页
+            //             perpage: 12  // 一页展示的个数
+            //         },
+            //         success: function (backData) {
+            //             // console.log(backData);
+            //             // 将设置好的模板渲染到页面上
+            //             $('.table>tbody').html(template('art_list', backData));
+            //         }
+            //     })
+            // }
+
+
+
+            // // 给筛选按钮添加点击事件
+            // $('#btnSearch').click(function (e) {
+            //     // 阻止表单的默认事件
+            //     e.preventDefault();
+            //     // // 调用请求数据的方法
+            //     // getDataList();
+            //     $.ajax({
+            //         url: BigNews.article_query,
+            //         type: 'get',
+            //         data: {
+            //             type: $('#selCategory').val(),
+            //             state: $('#selStatus').val(),
+            //             page: 1, // 当前页
+            //             perpage: 12  // 一页展示的个数
+            //         },
+            //         success: function (backData) {
+            //             console.log(backData);
+            //             // 将设置好的模板渲染到页面上
+            //             $('.table>tbody').html(template('art_list', backData));
+            //             // 分页插件
+            //             // 把之前的分页销毁掉，重新渲染一个分页插件
+            //             $('#pagination').twbsPagination('destroy');
+            //             // 重新渲染一个新的分页
+            //             $('#pagination').twbsPagination({
+            //                 totalPages: backData.data.totalPage, // 总页数
+            //                 visiblePages: 7,
+            //                 first: '首页',
+            //                 prev: '上一页',
+            //                 next: '下一页',
+            //                 last: '尾页',
+            //                 onPageClick: function (event, page) {
+            //                     $('#page-content').text('Page ' + page);
+            //                     // console.log(page)
+            //                     // 发送ajax请求获取数据
+            //                     getDataList(page);
+            //                 }
+            //             });
+            //         }
+            //     });
+
+
+
+
+            // })
+
+            // 调用ajax请求数据
+
+        })
+    </script>
 </body>
 
 </html>

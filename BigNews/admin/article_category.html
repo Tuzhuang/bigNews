@@ -82,21 +82,21 @@
     <!-- 新增成功和编辑成功的模态框 -->
     <div class="modal fade" id="myModalHint" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                  aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title">友情提示</h4>
-            </div>
-            <div class="modal-body">
-              <p><span></span>&hellip;</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-            </div>
-          </div><!-- /.modal-content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">友情提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p><span></span>&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
+    </div><!-- /.modal -->
 
 
     <!-- 写文章分类管理的模板 -->
@@ -139,78 +139,77 @@
                     $('.modal-title').text('新增分类');
                     $('.btn_ope').text('新增分类');
                     $('.btn_ope').removeClass('btn-primary');
-                    $('.btn_ope').addClass('btn-success btn-add');
-                    // 给新增按钮添加点击事件
-                    $('.btn-add').click(function () {
-                        // 判断如果输入框为空的话就不发送请求
-                        if ($('#recipient-name').val() == '' || $('#message-text').val() == '') {
-                            // 调用方法让模态框弹出
-                            $('#myModalHint').modal();
-                            // 给提示信息设置文字
-                            $('.modal-body>p>span').text('用户名或密码不能为空喔');
-                            return;
-                        }
-                        // 发送新增的ajax请求
-                        $.ajax({
-                            url: BigNews.category_add,
-                            type: 'post',
-                            data: {
-                                name: $('#recipient-name').val(),
-                                slug: $('#message-text').val()
-                            },
-                            success: function (backData) {
-                                // console.log(backData);
-                                // 让模态框和遮罩层消失
-                                $('#myModal').fadeOut();
-                                $('.modal-backdrop').fadeOut();
-                                // 新增成功之后弹出的提示框
-                                // 调用方法让模态框弹出
-                                $('#myModalHint').modal();
-                                // 给提示信息设置文字
-                                $('.modal-body>p>span').text(backData.msg);
-                                // 新增成功调用获取数据的方法
-                                getDataList();
-                                // 清空输入框
-                                $('.btn-cancel').click();
-                            }
-                        })
-                    })
-                } else if($(e.relatedTarget).text() == '编辑') {
+                    $('.btn_ope').addClass('btn-success');
+                } else if ($(e.relatedTarget).text() == '编辑') {
                     // 设置模态框的文本  编辑
                     $('.modal-title').text('编辑分类');
                     $('.btn_ope').text('编辑分类');
                     $('.btn_ope').removeClass('btn-success');
-                    $('.btn_ope').addClass('btn-primary btn-comp');
+                    $('.btn_ope').addClass('btn-primary');
                     // 给输入框设置文本  e.relatedTarget代表当前触发的元素
                     $('#recipient-name').val($(e.relatedTarget).parent().prev().prev().text());
                     $('#message-text').val($(e.relatedTarget).parent().prev().text());
-                    // 给新增按钮添加点击事件
-                    $('.btn-comp').click(function () {
-                        if ($(e.relatedTarget).text() == '编辑') {
-                        // console.log($(e.relatedTarget).text())
-                        // console.log($(e.relatedTarget).attr('data-id'))
-                            // 发送编辑的ajax请求
-                            $.ajax({
-                                url: BigNews.category_edit,
-                                type: 'post',
-                                data: {
-                                    id: $(e.relatedTarget).attr('data-id'),
-                                    name: $('#recipient-name').val(),
-                                    slug: $('#message-text').val()
-                                },
-                                success: function (backData) {
-                                    // console.log(backData)
-                                    // 隐藏模态框
-                                    $('#myModal').fadeOut();
-                                    $('.modal-backdrop').fadeOut();
-                                    // 调用方法让模态框弹出
-                                    $('#myModalHint').modal();
-                                    // 给提示信息设置文字
-                                    $('.modal-body>p>span').text(backData.msg);
-                                    // 重新请求数据
-                                    getDataList();
-                                }
-                            })
+                    // 给编辑分类按钮添加一个动态的id
+                    $('.btn_ope').attr('data-id', $(e.relatedTarget).attr('data-id'));
+                }
+            })
+
+            $('.btn_ope').click(function (e) {
+                // 新增
+                if ($(this).text() == '新增分类') {
+                    // 判断如果输入框为空的话就不发送请求
+                    if ($('#recipient-name').val() == '' || $('#message-text').val() == '') {
+                        // 调用方法让模态框弹出
+                        $('#myModalHint').modal();
+                        // 给提示信息设置文字
+                        $('.modal-body>p>span').text('用户名或密码不能为空喔');
+                        return;
+                    }
+                    // 发送新增的ajax请求
+                    $.ajax({
+                        url: BigNews.category_add,
+                        type: 'post',
+                        data: {
+                            name: $('#recipient-name').val(),
+                            slug: $('#message-text').val()
+                        },
+                        success: function (backData) {
+                            // console.log(backData);
+                            // 让模态框和遮罩层消失
+                            $('#myModal').fadeOut();
+                            $('.modal-backdrop').fadeOut();
+                            // 新增成功之后弹出的提示框
+                            // 调用方法让模态框弹出
+                            $('#myModalHint').modal();
+                            // 给提示信息设置文字
+                            $('.modal-body>p>span').text(backData.msg);
+                            // 新增成功调用获取数据的方法
+                            getDataList();
+                            // 清空输入框
+                            $('.btn-cancel').click();
+                        }
+                    })
+                } else {
+                    // 发送编辑的ajax请求
+                    $.ajax({
+                        url: BigNews.category_edit,
+                        type: 'post',
+                        data: {
+                            id: $(this).attr('data-id'),
+                            name: $('#recipient-name').val(),
+                            slug: $('#message-text').val()
+                        },
+                        success: function (backData) {
+                            // console.log(backData)
+                            // 隐藏模态框
+                            $('#myModal').fadeOut();
+                            $('.modal-backdrop').fadeOut();
+                            // 调用方法让模态框弹出
+                            $('#myModalHint').modal();
+                            // 给提示信息设置文字
+                            $('.modal-body>p>span').text(backData.msg);
+                            // 重新请求数据
+                            getDataList();
                         }
                     })
                 }
@@ -237,7 +236,7 @@
                     $.ajax({
                         url: BigNews.category_delete,
                         type: 'post',
-                        data: {id},
+                        data: { id },
                         success: function (backData) {
                             // console.log(backData);
                             // 重新请求数据
