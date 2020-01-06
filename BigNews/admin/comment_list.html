@@ -12,6 +12,10 @@
   <link rel="stylesheet" href="css/main.css">
   <script src="./libs/jquery-1.12.4.min.js"></script>
   <script src="./libs/template-web.js"></script>
+  <!-- 导入bootstrap的js文件 -->
+  <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+  <!-- 导入分页插件的js文件 -->
+  <script src="./libs/jquery.twbsPagination.min.js"></script>
 </head>
 
 <body>
@@ -142,7 +146,7 @@
         </tbody>
       </table>
       <div class="row text-center">
-        <ul class="pagination pagination-sm">
+        <!-- <ul class="pagination pagination-sm">
           <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
           <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
           <li class="page-item active"><a href="#" class="page-link">1</a></li>
@@ -154,12 +158,148 @@
           <li class="page-item"><a href="#" class="page-link">7</a></li>
           <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
           <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
-        </ul>
+        </ul> -->
         <ul id="pagination" class="pagination-sm"></ul>
       </div>
 
     </div>
   </div>
+  <!-- 请求成功之后弹出的模态框 -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">友情提示</h4>
+        </div>
+        <div class="modal-body">
+          <p><span></span>&hellip;</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <!-- 文章评论列表的模板 -->
+  <script id="comm_list" type="text/html">
+    {{ each data.data v }}
+      <tr>
+        <td>{{ v.author }}</td>
+        <td>{{ v.content }}</td>
+        <td>{{ v.title }}</td>
+        <td>{{ v.date }}</td>
+        <td>{{ v.state }}</td>
+        <td class="text-center">
+          <!-- 逻辑判断语句 -->
+          {{ if v.state == '已通过' }}
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-warning btn-xs btn-refuse">拒绝</a>
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-danger btn-xs btn-delete">删除</a>
+          {{ else if v.state == '待审核' }}
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-info btn-xs btn-ratify">批准</a>
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-warning btn-xs btn-refuse">拒绝</a>
+          {{ else if v.state == '已拒绝' }}
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-info btn-xs btn-ratify">批准</a>
+            <a href="javascript:void(0);;" data-id="{{ v.id }}" class="btn btn-danger btn-xs btn-delete">删除</a>
+          {{ /if }}
+        </td>
+      </tr>
+    {{ /each }}
+  </script>
+  <script src="./libs/http.js"></script>
+  <script>
+    $(function () {
+      // 页面一加载就发送ajax请求评论的数据
+      getCommList(1);
+
+      // 把获取评论的方法封装成函数
+      function getCommList(currentPage) {
+        $.ajax({
+          url: BigNews.comment_list,
+          type: 'get',
+          data: {
+            page: currentPage,
+            perpage: 12
+          },
+          success: function (backData) {
+            if (backData.code == 200) {
+              // 把设置好的模板渲染到页面上
+              $('.table>tbody').html(template('comm_list', backData));
+              // 将之前的分页销毁掉，然后重新生成新的分页
+              $('#pagination').twbsPagination('destroy');
+              // 初始化新的分页插件
+              $('#pagination').twbsPagination({
+                totalPages: backData.data.totalPage,  // 总页数
+                startPage: currentPage,  // 起始页
+                visiblePages: 7,  // 可见的选项页
+                first: '首页',
+                prev: '上一页',
+                next: '下一页',
+                last: '尾页',
+                onPageClick: function (event, page) {
+                  $('#page-content').text('Page ' + page);
+                  // 判断当前起始页和点击页是不是同一页，如果是就不执行下面的代码
+                  if (currentPage != page) {
+                    // 点击页码的时候重新渲染数据
+                    getCommList(page);
+                  }
+                }
+              });
+            }
+          }
+        })
+      }
+
+      // 给批准按钮添加点击事件 发送请求
+      $('.table>tbody').on('click', '.btn-ratify', function () {
+        // 获取当前点击的id
+        let id = $(this).attr('data-id');
+        // console.log(id);
+        // 发送批准的ajax请求
+        clickEvent(BigNews.comment_pass, id);
+      })
+
+      // 给拒绝按钮添加点击事件 发送请求
+      $('.table>tbody').on('click', '.btn-refuse', function () {
+        // 获取当前点击的id
+        let id = $(this).attr('data-id');
+        // 发送拒绝的ajax请求
+        clickEvent(BigNews.comment_reject, id);
+      })
+
+      // 给删除按钮添加点击事件 发送请求
+      $('.table>tbody').on('click', '.btn-delete', function () {
+        // 获取当前点击的id
+        let id = $(this).attr('data-id');
+        // 发送拒绝的ajax请求
+        clickEvent(BigNews.comment_delete, id);
+      })
+
+      // 把按钮请求的方法封装成函数
+      function clickEvent(url, id) {
+        $.ajax({
+          url: url,
+          type: 'post',
+          data: { id },
+          success: function (backData) {
+            // console.log(backData);
+            if (backData.code == 200) {
+              // 调用方法让模态框弹出
+              $('#myModal').modal();
+              // 给提示信息设置文字
+              $('.modal-body>p>span').text(backData.msg);
+              // 重新请求数据
+              getCommList(1);
+            }
+          }
+        })
+      }
+
+    })
+  </script>
 </body>
 
 </html>
