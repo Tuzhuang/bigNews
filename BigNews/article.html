@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- 引入bootstrap的css文件 -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
 </head>
 
 <body>
@@ -55,29 +57,31 @@
 
     <div class="main_con clearfix">
         <div class="left_con setfr">
-            <div class="breadcrumb">
-                当前位置： <a href="#">首页</a> &gt; <a href="#">科技</a> &gt; 文章详情
-            </div>
-            <h3 class="article_title">马斯克的新花样？连接人脑和电脑的初创公司又筹了一笔钱</h3>
-            <div class="article_info">杰克 发布于 2019-05-08 07:08:46&nbsp;&nbsp;&nbsp;分类: 奇趣事&nbsp;&nbsp;&nbsp;阅读:
-                (98)&nbsp;&nbsp;&nbsp;评论: (0)</div>
-            <div class="article_con">
+            <div class="content">
+                <div class="breadcrumb">
+                    当前位置： <a href="./index.html">首页</a> &gt; <a href="./list.html">科技</a> &gt; 文章详情
+                </div>
+                <h3 class="article_title">马斯克的新花样？连接人脑和电脑的初创公司又筹了一笔钱</h3>
+                <div class="article_info">杰克 发布于 2019-05-08 07:08:46&nbsp;&nbsp;&nbsp;分类: 奇趣事&nbsp;&nbsp;&nbsp;阅读:
+                    (98)&nbsp;&nbsp;&nbsp;评论: (0)</div>
+                <div class="article_con">
 
-                <p>“上天入地”还不够？硅谷“钢铁侠”马斯克名下一家低调的公司最近又融了一大笔钱。</p>
+                    <p>“上天入地”还不够？硅谷“钢铁侠”马斯克名下一家低调的公司最近又融了一大笔钱。</p>
 
-                <p>马斯克投资的一家小型且不为人熟知的脑机接口（brain-computer
-                    interface）公司Neuralink披露，该公司融到了3900万美元，虽然不及公司计划的融资额5100万美元，但也比上次的融资多了不少。</p>
+                    <p>马斯克投资的一家小型且不为人熟知的脑机接口（brain-computer
+                        interface）公司Neuralink披露，该公司融到了3900万美元，虽然不及公司计划的融资额5100万美元，但也比上次的融资多了不少。</p>
 
-                <p>两年前该公司曾计划融资1亿美元，但只拿到了2700万美元的融资。</p>
+                    <p>两年前该公司曾计划融资1亿美元，但只拿到了2700万美元的融资。</p>
 
-                <p>在Neuralink递交给美国证券交易委员会（SEC）的材料中，并没有披露融资是否来自传统的风险投资者或者来自该公司的员工。</p>
+                    <p>在Neuralink递交给美国证券交易委员会（SEC）的材料中，并没有披露融资是否来自传统的风险投资者或者来自该公司的员工。</p>
 
-                <p>2016年，Neuralink在美国加利福尼亚州以医学研究公司的名义成立，之后一直低调运行。</p>
+                    <p>2016年，Neuralink在美国加利福尼亚州以医学研究公司的名义成立，之后一直低调运行。</p>
 
-            </div>
-            <div class="article_links">
-                上一篇： <a href="#">世界第一台可以玩游戏的冰箱</a><br>
-                下一篇： <a href="#">世界第一个可以玩游戏的马桶、世界上第一个可以玩游戏的茶杯</a>
+                </div>
+                <div class="article_links">
+                    上一篇： <a href="#">世界第一台可以玩游戏的冰箱</a><br>
+                    下一篇： <a href="#">世界第一个可以玩游戏的马桶、世界上第一个可以玩游戏的茶杯</a>
+                </div>
             </div>
 
             <form action="" class="comment_form">
@@ -204,11 +208,269 @@
         <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
         <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
+    <!-- 请求成功的模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">友情提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p><span></span>&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     <!-- 引入模板引擎js文件 -->
     <script src="./js/template-web.js"></script>
     <script src="./js/jquery-1.12.4.min.js"></script>
+    <!-- 引入bootstrap的js文件 -->
+    <script src="./js/bootstrap.min.js"></script>
 
+    <!-- 首页全部分类  文章类型的模板 -->
+    <script id="level_two" type="text/html">
+        <li class="up"></li>
+        {{ each data v }}
+            <li><a href="./list.html?id={{ v.id }}">{{ v.name }}</a></li>
+        {{ /each }}
+    </script>
+    <!-- 文章详细信息的模板 -->
+    <script id="content" type="text/html">
+        <div class="breadcrumb">
+            当前位置： <a href="./index.html">首页</a> &gt; <a href="./list.html?categoryId={{ data.categoryId }}" data-categoryId="{{ data.categoryId }}">{{ data.category }}</a> &gt; 文章详情
+        </div>
+        <h3 class="article_title">{{ data.title }}</h3>
+        <div class="article_info">{{ data.author }}&nbsp;&nbsp;&nbsp;发布于{{ data.date }}&nbsp;&nbsp;07:08:46&nbsp;&nbsp;&nbsp;分类: {{ data.category }}&nbsp;&nbsp;&nbsp;阅读:
+            ({{ data.read }})&nbsp;&nbsp;&nbsp;评论: ({{ data.comments }})</div>
+        <div class="article_con">{{@ data.content }}</div>
+        <div class="article_links">
+            {{ if data.prev }}
+                上一篇： <a href="./article.html?id={{ data.prev.id }}">{{ data.prev.title }}</a><br>
+            {{ /if }}
+            {{ if data.next }}
+                下一篇： <a href="./article.html?id={{ data.next.id }}">{{ data.next.title }}</a>
+            {{ /if }}
+        </div>
+    </script>
+    <!-- 当前文章评论的模板 -->
+    <script id="comment_list_con" type="text/html">
+        {{ each data v }}
+        <div class="comment_detail_list">
+            <div class="person_pic fl">{{ v.author[0] }}</div>
+            <div class="name_time fl"><b>{{ v.author }}</b><span>{{ v.date }}&nbsp;&nbsp;&nbsp;{{v.time}}</span></div>
+            <div class="comment_text fl">{{ v.content }}</div>
+        </div>
+        {{ /each }}
+    </script>
+    <!-- 一周热门排行的模板 -->
+    <script id="content_list" type="text/html">
+        {{ each data v }}
+            <li><span>{{ $index+1 }}</span><a href="./article.html?id={{ v.id }}">{{ v.title }}</a></li>
+        {{ /each }}
+    </script>
+    <!-- 最新评论的模板引擎 -->
+    <script id="comment_list" type="text/html">
+        {{ each data v }}
+            <li>
+                <span>{{ v.author.split('')[0] }}</span>
+                <b><em>{{ v.author }}</em> {{ v.date }}({{ v.time }})说:</b>
+                <strong>{{ v.intro }}</strong>
+            </li>
+        {{ /each }}
+    </script>
+    <!-- 焦点关注的模板 -->
+    <script id="guanzhu_list" type="text/html">
+        {{ each data v }}
+            <li><a href="javascript:;">{{ v.intro }}</a></li>
+        {{ /each }}
+    </script>
+    <!-- 设置列表页的模板 -->
+    <script id="main_con" type="text/html">
+        <div class="list_title">
+            <h3>{{ data.data.category }}</h3>
+        </div>
+        {{ each data.data v }}
+        <div class="common_news_list">
+            <a href="./article.html?id={{ v.id }}" class="list_pic"><img src="{{ v.cover }}" alt=""></a>
+            <h4><a href="./article.html?id={{ v.id }}">{{ v.title }}</a></h4>
+            <p>{{ v.content }}</p>
+            <div class="new_info">
+                <span>标签：{{ v.category }}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读( {{ v.read }}
+                    )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( {{ v.comments }} )</span>
+                <b>发布于 2018-08-30 12:18:58</b>
+            </div>
+        </div>
+        {{ /each }}
+    </script>
+
+    <script src="./js/hicky.js"></script>
+    <script>
+        $(function () {
+            // 获取从上个页面传过来的id
+            let id = window.location.href.split('=')[1];
+            // console.log(id);
+
+            // 页面一加载就请求全部分类的数据  文章类型
+            $.ajax({
+                url: BigNews.category,
+                type: 'get',
+                success: function (backData) {
+                    // console.log(backData);
+                    // 将设置好的模板渲染到页面上  全部分类 文章类型
+                    $('.level_two').html(template('level_two', backData)); // 下拉
+                    $('.left_menu').html(template('level_two', backData)); // topbar
+                }
+            })
+
+            // 发送请求文章详细内容的ajax请求
+            $.ajax({
+                url: BigNews.article,
+                type: 'get',
+                data: { id },
+                success: function (backData) {
+                    // console.log(backData);
+                    // 将设置好的模板渲染到页面上
+                    $('.content').html(template('content', backData));
+                    // 请求关于此文章的评论  当上一个请求执行完毕的时候
+                    $.ajax({
+                        url: BigNews.get_comment,
+                        type: 'get',
+                        data: {
+                            articleId: backData.data.categoryId
+                        },
+                        success: function (backData) {
+                            // console.log(backData);
+                            // 修改评论数量
+                            $('.comment_count').html(backData.data.length + '条评论');
+                            // 将设置好的模板渲染到页面上
+                            $('.comment_list_con').html(template('comment_list_con', backData));
+                        }
+                    })
+                }
+            })
+
+            // 页面一加载就请求热门排行的数据
+            $.ajax({
+                url: BigNews.rank,
+                type: 'get',
+                success: function (backData) {
+                    // console.log(backData);
+                    // 将设置好的模板渲染到页面上  热门排行
+                    $('.content_list').html(template('content_list', backData));
+                    // 给前三个li标签的span添加类名
+                    $('.content_list>li:eq(0)>span').addClass('first');
+                    $('.content_list>li:eq(1)>span').addClass('second');
+                    $('.content_list>li:eq(2)>span').addClass('third');
+                }
+            })
+
+            // 页面一加载就请求最新评论的数据
+            getNewComm();
+
+            function getNewComm() {
+                $.ajax({
+                    url: BigNews.latest_comment,
+                    type: 'get',
+                    success: function (backData) {
+                        // console.log(backData);
+                        // 将最新评论的模板引擎渲染到页面上
+                        $('.comment_list').html(template('comment_list', backData));
+                    }
+                })
+            }
+
+            // 页面一加载请求焦点关注的数据
+            $.ajax({
+                url: BigNews.attention,
+                type: 'get',
+                success: function (backData) {
+                    // console.log(backData);  
+                    // 将设置好的模板渲染到页面上 焦点关注
+                    $('.guanzhu_list').html(template('guanzhu_list', backData));
+                }
+            })
+
+            // 发表评论 
+            // 给评论按钮添加点击事件
+            $('.comment_sub').click(function (e) {
+                // 阻止表单的默认事件
+                e.preventDefault();
+                // 获取用户的名称和内容
+                let user = $('.comment_name').val().trim();
+                let content = $('.comment_input').val().trim();
+                // 非空判断
+                if (user == '' || content == '') {
+                    // 调用方法让模态框弹出
+                    $('#myModal').modal();
+                    // 给提示信息设置文字
+                    $('.modal-body>p>span').text('请输入内容之后才可以发表的喔');
+                    return
+                }
+                // 发送ajax请求
+                $.ajax({
+                    url: BigNews.post_comment,
+                    type: 'post',
+                    data: {
+                        author: user,
+                        content: content,
+                        articleId: id,
+                        perpage:20
+                    },
+                    success: function (backData) {
+                        // console.log(backData);
+                        if (backData.code == 201) {
+                            // 调用方法让模态框弹出
+                            $('#myModal').modal();
+                            // 给提示信息设置文字
+                            $('.modal-body>p>span').text(backData.msg);
+                            // 模态框消失之后执行的事件
+                            $('#myModal').on('hidden.bs.modal', function (e) {
+                                // 清空输入框
+                                $('.comment_name').val('');
+                                $('.comment_input').val('');
+                                // 重新请求最新评论的数据
+                                getNewComm();
+                            })
+                        }
+                    }
+                })
+            })
+
+
+            // 给搜索按钮添加点击事件 搜索文章
+            $('.fa-search').click(function () {
+                // 获取当前文章类型的id
+                let categoryId = $('.breadcrumb>a:eq(1)').attr('data-categoryId');
+                // console.log(categoryId)
+                // 获取搜索框的内容
+                let txtVal = $('.search_txt').val();
+                // 发送ajax请求
+                $.ajax({
+                    url: BigNews.search,
+                    type: 'get',
+                    data: {
+                        key: txtVal,
+                        type: categoryId,
+                        page: 1
+                    },
+                    success: function (backData) {
+                        console.log(backData);
+                        // 将设置好的模板渲染到页面上
+                        $('.left_con').html(template('main_con', backData));
+                    }
+                })
+            })
+
+
+
+        })
+    </script>
 </body>
 
 </html>

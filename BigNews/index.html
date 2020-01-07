@@ -235,7 +235,7 @@
     <script id="focus_list" type="text/html">
         {{ each data v }}
         <li>
-            <a href="#" data-id="{{ v.id }}"><img src="{{ v.cover }}" alt=""></a>
+            <a href="./article.html?id={{ v.id }}"><img src="{{ v.cover }}" alt=""></a>
             <p>{{ v.title }}</p>
         </li>
         {{ /each }}
@@ -253,7 +253,7 @@
             <div class="common_news_list">
                 <a href="./article.html?id={{ v.id }}" class="list_pic"><img src="{{ v.cover }}" alt=""></a>
                 <h4><a href="#">{{ v.title }}</a></h4>
-                <p>{{ v.intro }}</p>
+                <p>{{@ v.intro }}</p>
                 <div class="new_info">
                     <span>标签：{{ v.category }}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读( {{ v.read }}
                         )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( {{ v.comments }} )</span>
@@ -265,7 +265,7 @@
     <!-- 一周热门排行的模板 -->
     <script id="hotrank_list" type="text/html">
         {{ each data v }}
-            <li><span>{{ $index+1 }}</span><a href="#">{{ v.title }}</a></li>
+            <li><span>{{ $index+1 }}</span><a href="./article.html?id={{ v.id }}">{{ v.title }}</a></li>
         {{ /each }}
 
     </script>
@@ -282,7 +282,7 @@
     <!-- 焦点关注的模板 -->
     <script id="guanzhu_list" type="text/html">
         {{ each data v }}
-            <li><a href="#">{{ v.intro }}</a></li>
+            <li><a href="javascript:;">{{ v.intro }}</a></li>
         {{ /each }}
     </script>
 
@@ -307,7 +307,7 @@
                 url: BigNews.category,
                 type: 'get',
                 success: function (backData) {
-                    console.log(backData);
+                    // console.log(backData);
                     // 将设置好的模板渲染到页面上  全部分类 文章类型
                     $('.level_two').html(template('level_two', backData)); // 下拉
                     $('.left_menu').html(template('level_two', backData)); // topbar
@@ -319,7 +319,7 @@
                 url: BigNews.latest,
                 type: 'get',
                 success: function (backData) {
-                    // console.log(backData);
+                    console.log(backData);
                     // 将设置好的模板渲染到页面上  最新资讯
                     $('.common_news').html(template('common_news', backData));
                 }

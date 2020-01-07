@@ -12,6 +12,7 @@
         rank: baseURL + '/index/rank',  // 热门排行
         latest_comment: baseURL + '/index/latest_comment',  // 最新评论
         attention: baseURL + '/index/attention',  // 焦点关注
+        article: baseURL + '/index/article',  // 文章详细内容
         get_comment: baseURL + '/index/get_comment',  // 评论列表
         post_comment: baseURL + '/index/post_comment',  // 发表评论
         search: baseURL + '/index/search'  // 文章搜索
