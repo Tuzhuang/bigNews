@@ -426,6 +426,13 @@
                     }
                 })
             }
+            
+            // 把从其他页面跳转过来的sessionStorage中的值取出来并渲染到输入框中发送请求
+            let sessionTxt = sessionStorage.getItem('searchVal');
+            $('.search_txt').val(sessionTxt);
+            // 触发点击事件
+            $('.search_btn').click();
+
         })
     </script>
 </body>

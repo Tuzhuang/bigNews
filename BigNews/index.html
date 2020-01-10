@@ -319,7 +319,7 @@
                 url: BigNews.latest,
                 type: 'get',
                 success: function (backData) {
-                    console.log(backData);
+                    // console.log(backData);
                     // 将设置好的模板渲染到页面上  最新资讯
                     $('.common_news').html(template('common_news', backData));
                 }
@@ -360,6 +360,17 @@
                     // 将设置好的模板渲染到页面上 焦点关注
                     $('.guanzhu_list').html(template('guanzhu_list',backData));
                 }
+            })
+
+            // 给搜索按钮添加点击事件
+            $('.search_btn').click(function(){
+                // 获取文本框的内容
+                let txtVal = $('.search_txt').val();
+                console.log(txtVal);
+                // 将数据保存在sessionStorage中
+                sessionStorage.setItem('searchVal',txtVal);
+                // 跳转到列表页
+                window.location.href = './list.html';
             })
         })
     </script>

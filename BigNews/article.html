@@ -442,29 +442,14 @@
                 })
             })
 
-
-            // 给搜索按钮添加点击事件 搜索文章
-            $('.fa-search').click(function () {
-                // 获取当前文章类型的id
-                let categoryId = $('.breadcrumb>a:eq(1)').attr('data-categoryId');
-                // console.log(categoryId)
-                // 获取搜索框的内容
+            // 给搜索按钮添加点击事件
+            $('.search_btn').click(function(){
+                // 获取输入框的值
                 let txtVal = $('.search_txt').val();
-                // 发送ajax请求
-                $.ajax({
-                    url: BigNews.search,
-                    type: 'get',
-                    data: {
-                        key: txtVal,
-                        type: categoryId,
-                        page: 1
-                    },
-                    success: function (backData) {
-                        console.log(backData);
-                        // 将设置好的模板渲染到页面上
-                        $('.left_con').html(template('main_con', backData));
-                    }
-                })
+                // 将获取到的值存到sessionStorage中
+                sessionStorage.setItem('searchVal',txtVal);
+                // 跳转到列表页
+                window.location.href = './list.html';
             })
 
 
